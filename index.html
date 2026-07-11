@@ -962,7 +962,7 @@
 
           <!-- Режим "Counter-Strike" теперь открывается отдельным большим окном (см. в конце body) -->
           <div class="cs-mode-hint" id="csWrap" style="display:none;">
-            <i class="bi bi-crosshair"></i> Розыгрыш откроется в отдельном окне по кнопке ниже
+            <i class="bi bi-crosshair"></i> Розыгрыш откроется в отдельном окне по кнопке ниже. Нужно минимум 10 участников не на кулдауне.
           </div>
 
           <div class="winner-reveal mb-3" id="winnerReveal"></div>
@@ -1515,6 +1515,7 @@ function renderParticipants() {
   if (participants.size === 0) {
     participantsEmpty.style.display = 'block';
     participantsList.querySelectorAll('.participant-chip').forEach(el => el.remove());
+    refreshCsButtonAvailability();
     return;
   }
 
@@ -1542,6 +1543,8 @@ function renderParticipants() {
     `;
     participantsList.appendChild(chip);
   });
+
+  refreshCsButtonAvailability();
 }
 
 // =========================================================================
@@ -1552,6 +1555,16 @@ let currentMode = 'roulette'; // 'roulette' | 'elimination' | 'cs'
 
 function getEligibleParticipants() {
   return [...participants.entries()].filter(([username]) => !isOnCooldown(username));
+}
+
+const CS_MIN_PARTICIPANTS = 10;
+
+// Для режима CS кнопка розыгрыша доступна только если участников (не на кулдауне)
+// хватает на полную арену 5×5. Для остальных режимов ограничения нет.
+function refreshCsButtonAvailability() {
+  if (currentMode !== 'cs' || isSpinning) return;
+  const eligibleCount = getEligibleParticipants().length;
+  drawBtn.disabled = eligibleCount < CS_MIN_PARTICIPANTS;
 }
 
 function refreshDrawPreview() {
@@ -1578,6 +1591,11 @@ function updateModeUI() {
     drawBtn.innerHTML = '<i class="bi bi-skull"></i> Начать выбывание!';
   } else {
     drawBtn.innerHTML = '<i class="bi bi-dice-5"></i> Крутить рулетку!';
+  }
+
+  if (!isSpinning) {
+    drawBtn.disabled = false; // сброс перед проверкой CS-ограничения
+    if (isCs) refreshCsButtonAvailability();
   }
 
   refreshDrawPreview();
@@ -1732,8 +1750,15 @@ function drawWinner() {
 
   winnerReveal.classList.remove('show');
 
-  // РЕЖИМ CS
+  // РЕЖИМ CS — нужна полная арена 5×5, иначе розыгрыш не запускаем
   if (currentMode === 'cs') {
+    if (eligible.length < CS_MIN_PARTICIPANTS) {
+      log(`Недостаточно участников для CS-режима: ${eligible.length}/${CS_MIN_PARTICIPANTS}.`, 'warn');
+      winnerReveal.textContent = `Для режима Counter-Strike нужно минимум ${CS_MIN_PARTICIPANTS} участников не на кулдауне (сейчас: ${eligible.length}).`;
+      winnerReveal.classList.add('show');
+      refreshCsButtonAvailability();
+      return;
+    }
     startCsRoulette(eligible);
     return;
   }
@@ -2150,12 +2175,11 @@ function finishCsRoulette() {
   winnerReveal.innerHTML = `🎉 Победитель: <strong>${escapeHtml(winnerData.displayName)}</strong> 🎉`;
   winnerReveal.classList.add('show');
 
+  isSpinning = false;
+  clearParticipantsBtn.disabled = false;
+
   renderParticipants();
   renderHistory();
-
-  isSpinning = false;
-  drawBtn.disabled = false;
-  clearParticipantsBtn.disabled = false;
 
   // Даём пару секунд полюбоваться экраном победы внутри окна, затем закрываем
   // арену и открываем уже знакомое окно с чатом и секундомером.
@@ -2185,8 +2209,8 @@ closeCsBtn.addEventListener('click', () => {
     // Розыгрыш ещё не завершён (видео не доиграло) — отменяем без победителя
     csPendingWinnerData = null;
     isSpinning = false;
-    drawBtn.disabled = false;
     clearParticipantsBtn.disabled = false;
+    refreshCsButtonAvailability();
     log('CS-розыгрыш закрыт вручную без выбора победителя.', 'info');
   }
 });
