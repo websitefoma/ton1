@@ -442,6 +442,165 @@
     margin-bottom: 1rem;
   }
 
+  /* ============ РЕЖИМ "КОРОЛЕВСКАЯ БИТВА" — бой на HP на живой арене ============ */
+  .battle-arena{
+    position: relative;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 1rem;
+  }
+  .battle-arena-2d{
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: radial-gradient(circle at 50% 40%, rgba(90,47,168,.16), rgba(10,8,20,.92) 78%);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .battle-arena-2d::before{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+  .battle-empty-hint{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #8a7fa8;
+    font-size: .85rem;
+    padding: 1.5rem;
+    z-index: 1;
+  }
+  .fighter-token{
+    position: absolute;
+    width: 64px;
+    margin-left: -32px;
+    margin-top: -26px;
+    text-align: center;
+    transition: left .55s linear, top .55s linear, opacity .5s ease;
+    z-index: 2;
+  }
+  .fighter-token-avatar{
+    font-size: 1.35rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.7));
+    transition: transform .2s ease;
+  }
+  .fighter-token-name{
+    font-size: .6rem;
+    font-weight: 700;
+    color: #d8d0ec;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(10,8,20,.7);
+    border-radius: 5px;
+    padding: 0 3px;
+    margin-top: 1px;
+  }
+  .fighter-token .hp-bar-outer{
+    width: 100%;
+    height: 5px;
+    margin: 2px 0 0;
+  }
+  .hp-bar-outer{
+    background: rgba(255,255,255,.08);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .hp-bar-fill{
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width .4s ease, background .4s ease;
+  }
+  .hp-bar-fill.hp-mid{
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  }
+  .hp-bar-fill.hp-low{
+    background: linear-gradient(90deg, #ef4444, #f87171);
+  }
+  .fighter-token.attacking .fighter-token-avatar{
+    transform: scale(1.35);
+  }
+  .fighter-token.shake .fighter-token-avatar{
+    animation: fighterShake .4s ease;
+  }
+  @keyframes fighterShake{
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+  .fighter-token.dead{
+    opacity: .3;
+    filter: grayscale(100%);
+    z-index: 0;
+  }
+  .fighter-token.dead .fighter-token-name{
+    color: #6b6478;
+  }
+  .fighter-token.winner{
+    z-index: 3;
+    animation: fighterWinnerPulse 1s ease infinite;
+  }
+  .fighter-token.winner .fighter-token-avatar{
+    filter: drop-shadow(0 0 10px rgba(16,185,129,.85));
+  }
+  .fighter-token.winner .fighter-token-name{
+    color: #10b981;
+  }
+  @keyframes fighterWinnerPulse{
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+  .damage-popup{
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    color: #ff6b6b;
+    font-weight: 800;
+    font-size: .85rem;
+    text-shadow: 0 0 6px rgba(0,0,0,.8);
+    pointer-events: none;
+    animation: damagePopupFloat .8s ease forwards;
+    z-index: 5;
+  }
+  @keyframes damagePopupFloat{
+    0% { opacity: 0; transform: translate(-50%, 0) scale(.7); }
+    20% { opacity: 1; transform: translate(-50%, -8px) scale(1.1); }
+    100% { opacity: 0; transform: translate(-50%, -30px) scale(1); }
+  }
+  .battle-log{
+    margin-top: .75rem;
+    max-height: 110px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: .5rem .7rem;
+    font-size: .76rem;
+    color: #c9c2dc;
+    line-height: 1.5;
+  }
+  .battle-log-line{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .cs-overlay{
     position: fixed;
     inset: 0;
@@ -943,6 +1102,10 @@
             <!-- НОВЫЙ режим Counter-Strike -->
             <input type="radio" class="btn-check" name="drawMode" id="modeCs" autocomplete="off">
             <label class="btn btn-outline-light btn-sm" for="modeCs"><i class="bi bi-crosshair"></i> Counter-Strike</label>
+
+            <!-- НОВЫЙ режим Королевская битва -->
+            <input type="radio" class="btn-check" name="drawMode" id="modeRace" autocomplete="off">
+            <label class="btn btn-outline-light btn-sm" for="modeRace"><i class="bi bi-shield-fill-exclamation"></i> Битва</label>
           </div>
 
           <!-- Колесо рулетки -->
@@ -963,6 +1126,11 @@
           <!-- Режим "Counter-Strike" теперь открывается отдельным большим окном (см. в конце body) -->
           <div class="cs-mode-hint" id="csWrap" style="display:none;">
             <i class="bi bi-crosshair"></i> Розыгрыш откроется в отдельном окне по кнопке ниже. Нужно минимум 10 участников не на кулдауне.
+          </div>
+
+          <!-- Режим "Королевская битва" теперь открывается отдельным большим окном (см. в конце body) -->
+          <div class="cs-mode-hint" id="raceWrap" style="display:none;">
+            <i class="bi bi-shield-fill-exclamation"></i> Розыгрыш откроется в отдельном окне по кнопке ниже. Нужно минимум 2 участника не на кулдауне.
           </div>
 
           <div class="winner-reveal mb-3" id="winnerReveal"></div>
@@ -1140,6 +1308,42 @@
   </div>
 </div>
 
+<!-- Режим "Королевская битва" — отдельное большое окно, чистая CSS/JS-анимация -->
+<div class="cs-overlay" id="raceOverlay">
+  <div class="cs-panel">
+    <div class="cs-header">
+      <h3>Королевская битва</h3>
+      <div class="cs-subtitle">Бойцы сражаются, теряя HP, — победит тот, кто останется последним живым!</div>
+    </div>
+
+    <audio id="raceWinnerSound" preload="none"></audio>
+
+    <!-- Все допущенные участники — выбранные для арены подсвечены фиолетовым -->
+    <div class="cs-all-participants-row" id="raceAllParticipantsRow"></div>
+
+    <div class="battle-arena" id="raceArena">
+      <div class="battle-arena-2d" id="battleArena2d"></div>
+      <div class="battle-log" id="battleLog"></div>
+
+      <div class="cs-winner-display-overlay" id="raceWinnerDisplay" style="display:none;">
+        <div class="winner-celebration">
+          <div class="confetti"></div><div class="confetti"></div><div class="confetti"></div>
+        </div>
+        <div class="cs-winner-avatar-overlay"><i class="bi bi-crown-fill"></i></div>
+        <div class="winner-info-overlay">
+          <div class="winner-name-overlay" id="raceWinnerName">Победитель</div>
+          <div class="winner-text-overlay">Единственный, кто остался в живых!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-footer">
+      <button type="button" class="btn btn-twitch" id="startRaceSelectionBtn"><i class="bi bi-play-fill"></i> Начать битву</button>
+      <button type="button" class="btn btn-outline-secondary" id="closeRaceBtn"><i class="bi bi-x-lg"></i> Закрыть</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============================================================ -->
 <!-- ВСТРОЕННЫЙ TMI.JS (взят из вашего исходного файла) -->
 <!-- ============================================================ -->
@@ -1207,6 +1411,7 @@ const eliminationEmptyHint = document.getElementById('eliminationEmptyHint');
 const modeRouletteRadio = document.getElementById('modeRoulette');
 const modeEliminationRadio = document.getElementById('modeElimination');
 const modeCsRadio = document.getElementById('modeCs');
+const modeRaceRadio = document.getElementById('modeRace');
 const dropsTickerTrack = document.getElementById('dropsTickerTrack');
 const winnerChatModalEl = document.getElementById('winnerChatModal');
 const winnerModal = new bootstrap.Modal(winnerChatModalEl);
@@ -1218,6 +1423,19 @@ const modalRepeatWarning = document.getElementById('modalRepeatWarning');
 const modalChatFeed = document.getElementById('modalChatFeed');
 const modalFeedEmpty = document.getElementById('modalFeedEmpty');
 const rerollBtn = document.getElementById('rerollBtn');
+
+// ---------- Элементы для режима "Гонки" (чистая анимация, без видео) ----------
+const raceWrap = document.getElementById('raceWrap');
+const raceOverlay = document.getElementById('raceOverlay');
+const raceAllParticipantsRow = document.getElementById('raceAllParticipantsRow');
+const raceArena = document.getElementById('raceArena');
+const battleArena2d = document.getElementById('battleArena2d');
+const battleLog = document.getElementById('battleLog');
+const startRaceSelectionBtn = document.getElementById('startRaceSelectionBtn');
+const closeRaceBtn = document.getElementById('closeRaceBtn');
+const raceWinnerDisplay = document.getElementById('raceWinnerDisplay');
+const raceWinnerName = document.getElementById('raceWinnerName');
+const raceWinnerSound = document.getElementById('raceWinnerSound');
 
 // ---------- Элементы для режима CS ----------
 const csWrap = document.getElementById('csWrap');
@@ -1573,6 +1791,9 @@ function refreshDrawPreview() {
   } else if (currentMode === 'cs') {
     // Ничего не делаем — состав игроков CS формируется случайно только
     // при нажатии кнопки розыгрыша, в момент открытия большого окна.
+  } else if (currentMode === 'race') {
+    // Ничего не делаем — арена "Королевской битвы" собирается случайно
+    // только при нажатии кнопки розыгрыша, в момент открытия большого окна.
   } else {
     drawWheel();
   }
@@ -1581,14 +1802,18 @@ function refreshDrawPreview() {
 function updateModeUI() {
   const isElimination = currentMode === 'elimination';
   const isCs = currentMode === 'cs';
-  wheelWrap.style.display = (isElimination || isCs) ? 'none' : 'block';
+  const isRace = currentMode === 'race';
+  wheelWrap.style.display = (isElimination || isCs || isRace) ? 'none' : 'block';
   eliminationWrap.style.display = isElimination ? 'block' : 'none';
   csWrap.style.display = isCs ? 'block' : 'none';
+  raceWrap.style.display = isRace ? 'block' : 'none';
 
   if (isCs) {
     drawBtn.innerHTML = '<i class="bi bi-crosshair"></i> Начать отбор КС!';
   } else if (isElimination) {
     drawBtn.innerHTML = '<i class="bi bi-skull"></i> Начать выбывание!';
+  } else if (isRace) {
+    drawBtn.innerHTML = '<i class="bi bi-shield-fill-exclamation"></i> Начать битву!';
   } else {
     drawBtn.innerHTML = '<i class="bi bi-dice-5"></i> Крутить рулетку!';
   }
@@ -1618,6 +1843,8 @@ function renderEliminationPreview() {
     eliminationGrid.appendChild(chip);
   });
 }
+
+const RACE_MAX_PARTICIPANTS = 16; // сколько человек максимум выходит на арену битвы
 
 
 function drawWheel() {
@@ -1763,6 +1990,18 @@ function drawWinner() {
     return;
   }
 
+  // РЕЖИМ "КОРОЛЕВСКАЯ БИТВА" — нужно минимум 2 участника, иначе бессмысленно
+  if (currentMode === 'race') {
+    if (eligible.length < 2) {
+      log('Недостаточно участников для Королевской битвы (нужно минимум 2).', 'warn');
+      winnerReveal.textContent = 'Для Королевской битвы нужно минимум 2 участника не на кулдауне.';
+      winnerReveal.classList.add('show');
+      return;
+    }
+    startRace(eligible);
+    return;
+  }
+
   // Остальные режимы (рулетка и выбывание)
   const winnerIndex = Math.floor(Math.random() * eligible.length);
   const [winnerUsername, winnerData] = eligible[winnerIndex];
@@ -1797,6 +2036,327 @@ function drawWinner() {
   } else {
     spinWheelTo(eligible.length, winnerIndex, onDrawFinish);
   }
+}
+
+// =========================================================================
+// РЕЖИМ "КОРОЛЕВСКАЯ БИТВА" — отдельное окно, бойцы двигаются по арене и
+// сходятся в бою, чистая CSS/JS-анимация
+// =========================================================================
+
+let racePendingWinnerData = null; // { username, data } — победитель уже выбран честно
+let racePendingEligible = null;   // список всех допущенных, ждём нажатия "Начать битву"
+let raceFighters = [];            // [{ username, data, hp, maxHp, isWinner, alive, x, y, targetUsername, tokenEl, ... }]
+let raceBattleInterval = null;    // основной "тик" боя (setInterval)
+let raceFinishTimer = null;
+let raceMidBattleSoundPlayed = false; // чтобы сыграть звук в разгаре боя только один раз за битву
+
+const RACE_START_HP = 100;
+const RACE_MIN_DAMAGE = 8;
+const RACE_MAX_DAMAGE = 22;
+const RACE_TICK_MS = 550;        // должно совпадать с transition в CSS у .fighter-token
+const RACE_MOVE_STEP = 9;        // на сколько % арены боец может сдвинуться за один тик
+const RACE_ATTACK_RANGE = 10;    // на таком расстоянии (в %) боец считается "в ближнем бою"
+const RACE_ATTACK_CHANCE = 0.85; // шанс атаковать, если цель в радиусе (иначе — просто стоит)
+
+// Папка со звуками победы: sounds/1.mp3 ... sounds/10.mp3 (нужно положить рядом с index.html)
+const RACE_WINNER_SOUNDS_FOLDER = 'sounds/';
+const RACE_WINNER_SOUNDS_COUNT = 10;
+
+/**
+ * Открывает окно "Королевской битвы". Участники на арену ЕЩЁ НЕ выбираются —
+ * это происходит только по нажатию кнопки "Начать битву" внутри окна.
+ * Здесь просто показываем всех допущенных участников (пока без подсветки).
+ */
+function startRace(eligible) {
+  isSpinning = true;
+  drawBtn.disabled = true;
+  clearParticipantsBtn.disabled = true;
+  startRaceSelectionBtn.disabled = false;
+  winnerReveal.classList.remove('show');
+  raceWinnerDisplay.style.display = 'none';
+
+  clearInterval(raceBattleInterval);
+  clearTimeout(raceFinishTimer);
+  raceBattleInterval = null;
+  racePendingWinnerData = null;
+  raceWinnerSound.pause();
+  raceMidBattleSoundPlayed = false;
+
+  racePendingEligible = eligible;
+  raceFighters = [];
+
+  // Показываем всех допущенных сверху — пока без подсветки,
+  // арена "соберётся" только при нажатии "Начать битву".
+  raceAllParticipantsRow.innerHTML = '';
+  eligible.forEach(([username, data]) => {
+    const chip = document.createElement('div');
+    chip.className = 'cs-participant-chip';
+    chip.dataset.username = username;
+    chip.textContent = data.displayName;
+    raceAllParticipantsRow.appendChild(chip);
+  });
+
+  battleArena2d.innerHTML = '<div class="battle-empty-hint">Нажмите «Начать битву», чтобы выбрать бойцов и начать сражение</div>';
+  battleLog.innerHTML = '';
+
+  raceOverlay.style.display = 'flex';
+}
+
+/**
+ * Запускается кнопкой "Начать битву" внутри окна: только теперь честно
+ * выбирается победитель среди ВСЕХ допущенных, отбираются бойцы на арену,
+ * они появляются на поле — и сразу начинается движение/бой.
+ */
+function runRaceSelection() {
+  if (!racePendingEligible) return;
+  startRaceSelectionBtn.disabled = true;
+
+  const eligible = racePendingEligible;
+
+  const winnerIdx = Math.floor(Math.random() * eligible.length);
+  const winnerEntry = eligible[winnerIdx];
+
+  const others = eligible.filter((_, i) => i !== winnerIdx);
+  shuffleArray(others);
+  const chosenOthers = others.slice(0, RACE_MAX_PARTICIPANTS - 1);
+  const arenaParticipants = shuffleArray([winnerEntry, ...chosenOthers]);
+
+  racePendingWinnerData = { username: winnerEntry[0], data: winnerEntry[1] };
+
+  // Подсвечиваем фиолетовым тех, кто попал на арену, в общем списке сверху
+  const arenaUsernames = new Set(arenaParticipants.map(([username]) => username));
+  raceAllParticipantsRow.querySelectorAll('.cs-participant-chip').forEach(chip => {
+    if (arenaUsernames.has(chip.dataset.username)) chip.classList.add('selected');
+  });
+
+  battleArena2d.innerHTML = '';
+
+  raceFighters = arenaParticipants.map(([username, data]) => {
+    const isWinner = username === winnerEntry[0];
+
+    const token = document.createElement('div');
+    token.className = 'fighter-token';
+    token.dataset.username = username;
+    token.innerHTML = `
+      <div class="fighter-token-avatar">🤺</div>
+      <div class="fighter-token-name">${escapeHtml(data.displayName)}</div>
+      <div class="hp-bar-outer"><div class="hp-bar-fill"></div></div>
+    `;
+    battleArena2d.appendChild(token);
+
+    const x = 10 + Math.random() * 80;
+    const y = 15 + Math.random() * 70;
+    token.style.left = `${x}%`;
+    token.style.top = `${y}%`;
+
+    return {
+      username,
+      data,
+      hp: RACE_START_HP,
+      maxHp: RACE_START_HP,
+      isWinner,
+      alive: true,
+      x, y,
+      targetUsername: null,
+      tokenEl: token,
+      avatarEl: token.querySelector('.fighter-token-avatar'),
+      hpFillEl: token.querySelector('.hp-bar-fill')
+    };
+  });
+
+  log(`Королевская битва: на арене ${raceFighters.length} бойцов из ${eligible.length} допущенных.`, 'info');
+
+  clearInterval(raceBattleInterval);
+  raceBattleInterval = setInterval(runBattleTick, RACE_TICK_MS);
+}
+
+function runBattleTick() {
+  const alive = raceFighters.filter(f => f.alive);
+
+  // В разгаре боя (когда выбыла примерно половина бойцов) — играем случайный
+  // звук для напряжения, ровно один раз за битву.
+  if (!raceMidBattleSoundPlayed && raceFighters.length > 2 && alive.length <= Math.ceil(raceFighters.length / 2)) {
+    raceMidBattleSoundPlayed = true;
+    playRaceRandomSound();
+  }
+
+  if (alive.length <= 1) {
+    clearInterval(raceBattleInterval);
+    raceBattleInterval = null;
+    raceFinishTimer = setTimeout(() => finishRace(), 900);
+    return;
+  }
+
+  // Порядок обработки перемешиваем каждый тик, чтобы не было систематического
+  // преимущества у того, кто в массиве оказался раньше.
+  const order = shuffleArray([...alive]);
+
+  order.forEach(fighter => {
+    if (!fighter.alive) return; // мог погибнуть в этом же тике от чужого удара
+
+    // Если цели нет или она уже мертва — выбираем новую случайную живую цель
+    if (!fighter.targetUsername || !isFighterAlive(fighter.targetUsername)) {
+      const candidates = raceFighters.filter(f => f.alive && f.username !== fighter.username);
+      if (candidates.length === 0) return;
+      fighter.targetUsername = candidates[Math.floor(Math.random() * candidates.length)].username;
+    }
+
+    const target = raceFighters.find(f => f.username === fighter.targetUsername);
+    if (!target || !target.alive) return;
+
+    const dx = target.x - fighter.x;
+    const dy = target.y - fighter.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist <= RACE_ATTACK_RANGE) {
+      // Достаточно близко для ближнего боя
+      if (Math.random() < RACE_ATTACK_CHANCE) {
+        performRaceAttack(fighter, target);
+      }
+    } else {
+      // Двигаемся навстречу цели
+      const step = Math.min(RACE_MOVE_STEP, dist);
+      fighter.x = clamp(fighter.x + (dx / dist) * step, 6, 94);
+      fighter.y = clamp(fighter.y + (dy / dist) * step, 10, 90);
+      fighter.tokenEl.style.left = `${fighter.x}%`;
+      fighter.tokenEl.style.top = `${fighter.y}%`;
+    }
+  });
+}
+
+function isFighterAlive(username) {
+  const f = raceFighters.find(f => f.username === username);
+  return !!(f && f.alive);
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function performRaceAttack(attacker, target) {
+  let damage = RACE_MIN_DAMAGE + Math.floor(Math.random() * (RACE_MAX_DAMAGE - RACE_MIN_DAMAGE + 1));
+
+  // Победитель никогда не может погибнуть — смертельный удар ограничивается
+  if (target.isWinner && damage >= target.hp) {
+    damage = Math.max(0, target.hp - 1);
+  }
+
+  target.hp = Math.max(0, target.hp - damage);
+  updateFighterToken(target);
+  if (damage > 0) showDamagePopup(target, damage);
+  shakeToken(target.tokenEl);
+  pulseToken(attacker.tokenEl);
+
+  appendBattleLog(`⚔️ <b>${escapeHtml(attacker.data.displayName)}</b> атакует <b>${escapeHtml(target.data.displayName)}</b> на ${damage} урона (HP: ${target.hp})`);
+
+  if (target.hp <= 0 && !target.isWinner) {
+    target.alive = false;
+    target.tokenEl.classList.add('dead');
+    target.avatarEl.textContent = '💀';
+    appendBattleLog(`💀 <b>${escapeHtml(target.data.displayName)}</b> выбывает из битвы!`);
+  }
+}
+
+function updateFighterToken(fighter) {
+  const pct = Math.max(0, Math.round((fighter.hp / fighter.maxHp) * 100));
+  fighter.hpFillEl.style.width = `${pct}%`;
+  fighter.hpFillEl.classList.remove('hp-mid', 'hp-low');
+  if (pct <= 20) {
+    fighter.hpFillEl.classList.add('hp-low');
+  } else if (pct <= 50) {
+    fighter.hpFillEl.classList.add('hp-mid');
+  }
+}
+
+function showDamagePopup(fighter, damage) {
+  const popup = document.createElement('div');
+  popup.className = 'damage-popup';
+  popup.textContent = `-${damage}`;
+  fighter.tokenEl.appendChild(popup);
+  setTimeout(() => popup.remove(), 850);
+}
+
+function shakeToken(tokenEl) {
+  tokenEl.classList.remove('shake');
+  // reflow, чтобы анимация перезапустилась даже при повторном ударе подряд
+  void tokenEl.offsetWidth;
+  tokenEl.classList.add('shake');
+  setTimeout(() => tokenEl.classList.remove('shake'), 420);
+}
+
+function pulseToken(tokenEl) {
+  tokenEl.classList.add('attacking');
+  setTimeout(() => tokenEl.classList.remove('attacking'), 420);
+}
+
+function appendBattleLog(html) {
+  const line = document.createElement('div');
+  line.className = 'battle-log-line';
+  line.innerHTML = html;
+  battleLog.appendChild(line);
+  battleLog.scrollTop = battleLog.scrollHeight;
+
+  // не даём логу расти бесконечно
+  while (battleLog.children.length > 40) {
+    battleLog.removeChild(battleLog.firstChild);
+  }
+}
+
+function playRaceRandomSound() {
+  const num = Math.floor(Math.random() * RACE_WINNER_SOUNDS_COUNT) + 1;
+  const src = `${RACE_WINNER_SOUNDS_FOLDER}${num}.mp3`;
+  raceWinnerSound.src = src;
+  raceWinnerSound.currentTime = 0;
+  const playPromise = raceWinnerSound.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(err => {
+      log(`Не удалось проиграть победный звук (${src}): ${err}`, 'warn');
+    });
+  }
+}
+
+/**
+ * Объявляет победителя битвы (уже выбранного честно заранее) и продолжает
+ * по тому же сценарию, что рулетка/выбывание/CS — история, кулдаун, окно
+ * с чатом и секундомером.
+ */
+function finishRace() {
+  if (!racePendingWinnerData) return;
+
+  clearInterval(raceBattleInterval);
+  raceBattleInterval = null;
+  clearTimeout(raceFinishTimer);
+
+  const { username: winnerUsername, data: winnerData } = racePendingWinnerData;
+  racePendingWinnerData = null;
+  racePendingEligible = null;
+
+  const winnerFighter = raceFighters.find(f => f.username === winnerUsername);
+  if (winnerFighter) {
+    winnerFighter.tokenEl.classList.add('winner');
+    winnerFighter.avatarEl.textContent = '👑';
+  }
+
+  raceWinnerName.textContent = winnerData.displayName;
+  raceWinnerDisplay.style.display = 'flex';
+
+  const historyTimestamp = addWinnerToHistory(winnerUsername, winnerData.displayName, currentKeyword, currentChannel || 'неизвестно');
+  log(`Победитель Королевской битвы: ${winnerData.displayName}`, 'success');
+
+  winnerReveal.innerHTML = `🏆 Победитель: <strong>${escapeHtml(winnerData.displayName)}</strong> 🏆`;
+  winnerReveal.classList.add('show');
+
+  renderParticipants();
+  renderHistory();
+
+  isSpinning = false;
+  drawBtn.disabled = false;
+  clearParticipantsBtn.disabled = false;
+
+  setTimeout(() => {
+    raceOverlay.style.display = 'none';
+    openWinnerWatch(winnerUsername, winnerData.displayName, historyTimestamp);
+  }, 3000);
 }
 
 // =========================================================================
@@ -2215,6 +2775,26 @@ closeCsBtn.addEventListener('click', () => {
   }
 });
 
+startRaceSelectionBtn.addEventListener('click', runRaceSelection);
+
+closeRaceBtn.addEventListener('click', () => {
+  raceOverlay.style.display = 'none';
+  clearInterval(raceBattleInterval);
+  raceBattleInterval = null;
+  clearTimeout(raceFinishTimer);
+  raceWinnerSound.pause();
+
+  if (racePendingWinnerData || racePendingEligible) {
+    // Битва ещё не завершена (или даже не начата) — отменяем без победителя
+    racePendingWinnerData = null;
+    racePendingEligible = null;
+    isSpinning = false;
+    drawBtn.disabled = false;
+    clearParticipantsBtn.disabled = false;
+    log('Королевская битва закрыта вручную без выбора победителя.', 'info');
+  }
+});
+
 // =========================================================================
 // ОКНО ПОБЕДИТЕЛЯ (секундомер)
 // =========================================================================
@@ -2530,12 +3110,12 @@ noKeywordCheck.addEventListener('change', () => {
 });
 
 modeRouletteRadio.addEventListener('change', () => {
-  if (isSpinning) { modeEliminationRadio.checked = (currentMode === 'elimination'); modeCsRadio.checked = (currentMode === 'cs'); return; }
+  if (isSpinning) { modeEliminationRadio.checked = (currentMode === 'elimination'); modeCsRadio.checked = (currentMode === 'cs'); modeRaceRadio.checked = (currentMode === 'race'); return; }
   currentMode = 'roulette';
   updateModeUI();
 });
 modeEliminationRadio.addEventListener('change', () => {
-  if (isSpinning) { modeRouletteRadio.checked = (currentMode === 'roulette'); modeCsRadio.checked = (currentMode === 'cs'); return; }
+  if (isSpinning) { modeRouletteRadio.checked = (currentMode === 'roulette'); modeCsRadio.checked = (currentMode === 'cs'); modeRaceRadio.checked = (currentMode === 'race'); return; }
   currentMode = 'elimination';
   updateModeUI();
 });
@@ -2544,9 +3124,21 @@ modeCsRadio.addEventListener('change', () => {
     modeRouletteRadio.checked = (currentMode === 'roulette');
     modeEliminationRadio.checked = (currentMode === 'elimination');
     modeCsRadio.checked = (currentMode === 'cs');
+    modeRaceRadio.checked = (currentMode === 'race');
     return;
   }
   currentMode = 'cs';
+  updateModeUI();
+});
+modeRaceRadio.addEventListener('change', () => {
+  if (isSpinning) {
+    modeRouletteRadio.checked = (currentMode === 'roulette');
+    modeEliminationRadio.checked = (currentMode === 'elimination');
+    modeCsRadio.checked = (currentMode === 'cs');
+    modeRaceRadio.checked = (currentMode === 'race');
+    return;
+  }
+  currentMode = 'race';
   updateModeUI();
 });
 
