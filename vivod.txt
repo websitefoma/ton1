@@ -5,7 +5,7 @@ KENTOL - StatTrak™ AWP | Queen's Gambit - 4507
 27avgdem0n  - Тычковые ножи | Автотроника – 4259
 SHK1PER - Kukri Knife | Сажа – 4171
 Tomix - AK-47 | Снежный вихрь – 1589, Маркус Делроу | ФБР: антитеррор – 807, USP-S | Извилины – 366 = 2762
-Falancq - AK-47 | Орбита, вер. 01 - 2618
+Falancq - AK-47 | M4A1-S | Атомный сплав- 2558
 glebasik_23433 - Tec-9 | Топливный инжектор – 967, M4A1-S | Дикий тусовщик – 814, AK-47 | Дилетанты – 531 = 2350
 Romam - Галиль» | Цербер – 2236
 fodycs - AWP | Chrome Cannon - 2125
@@ -23,7 +23,8 @@ pes_patrons - StatTrak™ M4A1-S | Хрусталь  - 1025
 Tverr - StatTrak™ M4A1-S | Хрусталь – 985
 the_pingvin17 - StatTrak™ AK-47 | Сланец - 982
 akbar - AK-47 | Nouveau Rouge - 935
-Eiduwodi - M4A1-S | Опустошитель - 934
+Eiduwodi - M4A1-S | Опустошитель – 934
+Tverr - Glock-18 | Shinobu - 835
 Kentol193 - AK-47 | Полёт журавля – 813
 Сердечко - AK-47 | Полёт журавля – 805
 matvey7049 - M4A1-S | Дикий тусовщик - 793
