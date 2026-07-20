@@ -1066,6 +1066,19 @@
             <input type="number" min="0" class="form-control" id="cooldownInput" value="7">
           </div>
 
+          <div class="mb-3">
+            <label class="form-label mb-1"><i class="bi bi-megaphone"></i> Озвучка команды !!</label>
+            <small class="d-block mb-2">Например: «!! привет всем» — озвучится текст после команды</small>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="ttsModCheck">
+              <label class="form-check-label small" for="ttsModCheck">Разрешить модераторам</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="ttsVipCheck">
+              <label class="form-check-label small" for="ttsVipCheck">Разрешить VIP</label>
+            </div>
+          </div>
+
           <div class="d-flex gap-2 flex-wrap">
             <button class="btn btn-twitch" id="connectBtn"><i class="bi bi-broadcast"></i> Подключиться</button>
             <button class="btn btn-outline-danger" id="disconnectBtn" disabled><i class="bi bi-x-circle"></i> Отключиться</button>
@@ -1383,6 +1396,8 @@ let winnerWatch = null;
 const channelInput = document.getElementById('channelInput');
 const keywordInput = document.getElementById('keywordInput');
 const noKeywordCheck = document.getElementById('noKeywordCheck');
+const ttsModCheck = document.getElementById('ttsModCheck');
+const ttsVipCheck = document.getElementById('ttsVipCheck');
 const cooldownInput = document.getElementById('cooldownInput');
 const connectBtn = document.getElementById('connectBtn');
 const disconnectBtn = document.getElementById('disconnectBtn');
@@ -1477,6 +1492,39 @@ function log(message, level = 'info') {
   line.textContent = `[${time}] ${message}`;
   debugLog.appendChild(line);
   debugLog.scrollTop = debugLog.scrollHeight;
+}
+
+// =========================================================================
+// ОЗВУЧКА СООБЩЕНИЙ (модераторы / VIP)
+// =========================================================================
+
+let ttsVoice = null;
+
+function pickTtsVoice() {
+  if (!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return;
+  ttsVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ru')) || voices[0];
+}
+
+if ('speechSynthesis' in window) {
+  pickTtsVoice();
+  window.speechSynthesis.onvoiceschanged = pickTtsVoice;
+}
+
+function speakChatMessage(text) {
+  if (!('speechSynthesis' in window)) return;
+  const trimmed = text.trim();
+  if (!trimmed) return;
+  try {
+    const utterance = new SpeechSynthesisUtterance(trimmed);
+    if (ttsVoice) utterance.voice = ttsVoice;
+    utterance.lang = (ttsVoice && ttsVoice.lang) || 'ru-RU';
+    utterance.rate = 1;
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    log('Ошибка озвучки: ' + err, 'error');
+  }
 }
 
 window.addEventListener('error', (event) => {
@@ -3013,6 +3061,13 @@ async function connectToChat() {
     const msgUsername = (tags.username || '').toLowerCase();
     const msgDisplayName = tags['display-name'] || tags.username;
     log(`Сообщение от ${msgDisplayName}: "${message}"`, 'info');
+
+    const isModeratorMsg = tags.mod === true || tags.badges?.broadcaster !== undefined || tags['user-type'] === 'mod';
+    const isVipMsg = tags.badges?.vip !== undefined;
+    const ttsMatch = message.trim().match(/^!!\s+(.+)$/i);
+    if (ttsMatch && ((isModeratorMsg && ttsModCheck.checked) || (isVipMsg && ttsVipCheck.checked))) {
+      speakChatMessage(ttsMatch[1]);
+    }
 
     if (msgUsername) {
       const stats = messageStats.get(msgUsername) || { keywordCount: 0, otherCount: 0, displayName: msgDisplayName };
